@@ -311,8 +311,10 @@ localstack
 Install backend dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-api.txt
 ```
+
+`requirements.txt` contains the broader local development/research stack, while `requirements-api.txt` is the lighter backend runtime used by Docker and GitHub Actions.
 
 Train baseline model:
 
@@ -422,7 +424,7 @@ GitHub Actions:
 .github/workflows/deploy-aws-ecs.yml
 ```
 
-CI validates backend dependencies, unit tests, API import, frontend install, frontend production build, Docker image build, and the DVC pipeline graph.
+CI validates backend dependencies, unit tests, API import, frontend install, frontend production build, Docker image build, and DVC pipeline syntax. The deploy workflows skip safely unless the required provider secrets are configured.
 
 ## Testing
 

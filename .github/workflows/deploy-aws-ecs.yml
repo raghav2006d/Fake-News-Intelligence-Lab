@@ -6,16 +6,30 @@ on:
 jobs:
   ecs:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID_SET: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY_SET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION_SET: ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY_SET: ${{ secrets.ECR_REGISTRY }}
+      ECR_REPOSITORY_SET: ${{ secrets.ECR_REPOSITORY }}
+      ECS_CLUSTER_SET: ${{ secrets.ECS_CLUSTER }}
+      ECS_SERVICE_SET: ${{ secrets.ECS_SERVICE }}
     steps:
       - uses: actions/checkout@v4
+      - name: Skip AWS deploy
+        if: ${{ env.AWS_ACCESS_KEY_ID_SET == '' || env.AWS_SECRET_ACCESS_KEY_SET == '' || env.AWS_REGION_SET == '' || env.ECR_REGISTRY_SET == '' || env.ECR_REPOSITORY_SET == '' || env.ECS_CLUSTER_SET == '' || env.ECS_SERVICE_SET == '' }}
+        run: echo "AWS deployment secrets are not configured; skipping AWS ECS deploy."
       - uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ env.AWS_ACCESS_KEY_ID_SET != '' && env.AWS_SECRET_ACCESS_KEY_SET != '' && env.AWS_REGION_SET != '' && env.ECR_REGISTRY_SET != '' && env.ECR_REPOSITORY_SET != '' && env.ECS_CLUSTER_SET != '' && env.ECS_SERVICE_SET != '' }}
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Login to Amazon ECR
+        if: ${{ env.AWS_ACCESS_KEY_ID_SET != '' && env.AWS_SECRET_ACCESS_KEY_SET != '' && env.AWS_REGION_SET != '' && env.ECR_REGISTRY_SET != '' && env.ECR_REPOSITORY_SET != '' && env.ECS_CLUSTER_SET != '' && env.ECS_SERVICE_SET != '' }}
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push image
+        if: ${{ env.AWS_ACCESS_KEY_ID_SET != '' && env.AWS_SECRET_ACCESS_KEY_SET != '' && env.AWS_REGION_SET != '' && env.ECR_REGISTRY_SET != '' && env.ECR_REPOSITORY_SET != '' && env.ECS_CLUSTER_SET != '' && env.ECS_SERVICE_SET != '' }}
         env:
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
@@ -24,6 +38,7 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Force ECS deployment
+        if: ${{ env.AWS_ACCESS_KEY_ID_SET != '' && env.AWS_SECRET_ACCESS_KEY_SET != '' && env.AWS_REGION_SET != '' && env.ECR_REGISTRY_SET != '' && env.ECR_REPOSITORY_SET != '' && env.ECS_CLUSTER_SET != '' && env.ECS_SERVICE_SET != '' }}
         run: |
           aws ecs update-service \
             --cluster "${{ secrets.ECS_CLUSTER }}" \
