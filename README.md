@@ -314,7 +314,7 @@ Install backend dependencies:
 pip install -r requirements-api.txt
 ```
 
-`requirements.txt` contains the broader local development/research stack, while `requirements-api.txt` is the lighter backend runtime used by Docker and GitHub Actions.
+`requirements.txt` contains the broader local development/research stack, including optional LIME support. `requirements-api.txt` is the lighter backend runtime used by Docker and GitHub Actions.
 
 Train baseline model:
 
