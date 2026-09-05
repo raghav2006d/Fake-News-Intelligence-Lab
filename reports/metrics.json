@@ -1,0 +1,10 @@
+{
+  "accuracy":0.988752784,
+  "precision":0.9842556147,
+  "recall":0.9922969188,
+  "f1":0.9882599093,
+  "roc_auc":0.9992034861,
+  "train_samples":35918.0,
+  "test_samples":8980.0,
+  "dataset_samples":44898.0
+}

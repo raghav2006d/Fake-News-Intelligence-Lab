@@ -1,0 +1,23 @@
+stages:
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - src/data.py
+      - src/text_processing.py
+      - fake news dataset ml.zip
+    outs:
+      - models/fake_news_pipeline.joblib
+    metrics:
+      - reports/metrics.json:
+          cache: false
+
+  train_distilbert:
+    cmd: python src/train_distilbert.py
+    deps:
+      - src/train_distilbert.py
+      - src/data.py
+      - src/text_processing.py
+      - fake news dataset ml.zip
+    outs:
+      - models/distilbert_fake_news

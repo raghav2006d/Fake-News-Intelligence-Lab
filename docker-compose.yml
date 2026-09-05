@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fake_news
+      POSTGRES_USER: fake_news_user
+      POSTGRES_PASSWORD: fake_news_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  localstack:
+    image: localstack/localstack:3.7
+    environment:
+      SERVICES: s3
+      AWS_DEFAULT_REGION: us-east-1
+      DEBUG: "0"
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack_data:/var/lib/localstack
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - localstack
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://fake_news_user:fake_news_password@postgres:5432/fake_news
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - MODEL_BUCKET=fake-news-model-artifacts
+    volumes:
+      - ./models:/app/models
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+volumes:
+  postgres_data:
+  localstack_data:

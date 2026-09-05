@@ -1,0 +1,17 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+mlruns/
+*.pyc
+node_modules/
+dist/
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+prediction_logs.db
+pytest-cache-files-*/
+.hf_cache/
+Copy_of_FAKE_NEWS_DECTECTOR_AI_.ipynb
+fake_news_model.pkl
