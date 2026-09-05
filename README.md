@@ -38,9 +38,9 @@ Labels:
 1 = Real News
 ```
 
-## Implemented Model
+## Implemented Production Model
 
-The deployed baseline model is a classical NLP pipeline:
+The deployed production model is a classical NLP pipeline optimized for fast API inference:
 
 ```text
 Raw article text
@@ -74,6 +74,64 @@ F1 Score:  0.9883
 ROC-AUC:   0.9992
 Samples:   44,898
 ```
+
+This is the model currently loaded by the FastAPI service from:
+
+```text
+models/fake_news_pipeline.joblib
+```
+
+## Notebook Research and Ensemble Modeling
+
+The original notebook explored a broader fake news detection workflow before the project was converted into a clean production app. That research workflow included EDA, NLP feature engineering, multi-model comparison, ensemble modeling, and a real-time prediction prototype.
+
+Notebook techniques included:
+
+- spaCy-based text cleaning and lemmatization
+- TF-IDF and CountVectorizer text representations
+- unigram and bigram feature extraction
+- text length, word count, sentence count, and average word length
+- part-of-speech counts for nouns, verbs, adjectives, and adverbs
+- named entity count
+- punctuation features such as exclamation and question mark counts
+- TextBlob sentiment polarity and subjectivity
+- feature scaling with `StandardScaler`
+- sparse feature stacking with TF-IDF plus engineered numeric features
+- stratified train, validation, and test splitting
+- cross-validation using F1 scoring
+- ROC-AUC, precision, recall, F1-score, and confusion matrix evaluation
+
+Models explored in the notebook:
+
+```text
+Logistic Regression
+Random Forest
+Gradient Boosting
+Support Vector Machine
+Multinomial Naive Bayes
+MLP Neural Network
+Soft Voting Ensemble
+DistilBERT transformer demo / fine-tuning path
+```
+
+The ensemble workflow used:
+
+```text
+TF-IDF text features
++ text_length
++ word_count
++ sentiment polarity
++ sentiment subjectivity
+-> scaling for numeric features
+-> feature stacking
+-> individual model training
+-> Gradient Boosting validation with early stopping
+-> soft VotingClassifier ensemble
+-> 3-fold cross-validation
+-> comprehensive test evaluation
+```
+
+The production API currently serves the lighter TF-IDF + Logistic Regression model because it is fast, easy to deploy, explainable, and reliable for a portfolio web service. The notebook ensemble and DistilBERT training scripts remain documented as advanced experimentation paths that can be promoted to production later.
 
 ## DistilBERT Pipeline
 
